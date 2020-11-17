@@ -2,7 +2,7 @@ const {mongoose} = require('../db/mongoose.js');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-var UserSchema = new mongoose.Schema({//store the schema of the user. we can add method to 'schema' but not to 'model'
+const UserSchema = new mongoose.Schema({//store the schema of the user. we can add method to 'schema' but not to 'model'
     firstName: {
         type: String,
         required: true,
