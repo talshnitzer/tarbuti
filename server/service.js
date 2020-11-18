@@ -5,7 +5,7 @@ const error = (err) => {
     let errmsg = {}
     switch (err) {
         case '1':
-            errmsg = {error: 'user not found'}
+            errmsg = {error: 'document not found'}
             break;
         case '2':
             errmsg = {error: 'password not correct'}

@@ -33,6 +33,53 @@ app.post('/recommendation/create',async (req,res)=>{
     }   
 });
 
+//Update  a recommendation
+app.post('/recommendation/update/:id', async (req,res) => {
+    try {
+        const id = req.params.id
+        const body = _.pick(req.body, 
+            ['serviceName', 
+            'providerName', 
+            'providerPhone',
+            'providerEmail', 
+            'description',
+            'tags',
+            'eventDate',
+            'servicePrice',
+            'priceRemarks']); 
+        let recommendation = await Recommendation.findByIdAndUpdate(id,body,{new: true});
+        console.log('***/recommendation/update/:id recommendation: ');
+
+        if (!recommendation){
+            throw new Error('1')
+        }
+        res.send({recommendation});
+
+    } catch(e) {
+        console.log('***/recommendation/update/:id error e:', e);
+        res.status(200).send(error(e.message));
+    }
+});
+
+//Delete recommendation
+app.post('/recommendation/delete/:id' ,async (req, res) => {
+    try {
+        const id = req.params.id
+        let recommendation = await Recommendation.findOne( {_id: id})
+        if (!recommendation){
+            throw new Error('1')
+        }
+        
+        await recommendation.remove()
+        console.log('***/recommendation/delete/:id removed');
+        
+        let ok = 'ok'
+        res.send({ok});
+    } catch (e) {
+        res.status(200).send(error(e.message));
+    }
+})
+
 //GET all recommendations
 app.get('/recommendation/all', async (req,res) => {
     try{
@@ -68,6 +115,46 @@ app.post('/tag/create',async (req,res)=>{
         res.status(200).send(error(e.message));
     }   
 });
+
+//Update  a tag
+app.post('/tag/update/:id', async (req,res) => {
+    try {
+        const id = req.params.id
+        const body = _.pick(req.body, 
+            ['tagName', 
+            'tagContent']); 
+        let tag = await Tag.findByIdAndUpdate(id,body,{new: true});
+        console.log('***/tag/update/:id tag: ');
+
+        if (!tag){
+            throw new Error('1')
+        }
+        res.send({tag});
+
+    } catch(e) {
+        console.log('***/tag/update/:id error e:', e);
+        res.status(200).send(error(e.message));
+    }
+});
+
+//Delete tag
+app.post('/tag/delete/:id' ,async (req, res) => {
+    try {
+        const id = req.params.id
+        let tag = await Tag.findOne( {_id: id})
+        if (!tag){
+            throw new Error('1')
+        }
+        
+        await tag.remove()
+        console.log('***/tag/delete/:id removed');
+        
+        let ok = 'ok'
+        res.send({ok});
+    } catch (e) {
+        res.status(200).send(error(e.message));
+    }
+})
 
 //GET all tags
 app.get('/tag/all', async (req,res) => {
