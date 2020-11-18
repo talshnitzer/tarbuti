@@ -7,6 +7,7 @@ const _ = require('lodash');
 
 const { authenticate } = require('./middleware/authenticate');
 const {User} = require('./models/user');
+const {Tag} = require('./models/tag');
 const {Recommendation} = require('./models/recommendation')
 const {error} = require('./service')
 
@@ -42,12 +43,37 @@ app.get('/recommendation/all', async (req,res) => {
     }    
 });
 
+
+
 //GET a specific recommendation
 app.get('/recommendation/:id', async (req,res) => {
     try{
         const id = req.params.id
         const recommendation = await Recommendation.findById(id);
         res.send(recommendation);
+    } catch (e) {
+        res.status(200).send(e.message);
+    }    
+});
+
+//Create a tag
+app.post('/tag/create',async (req,res)=>{
+    try{
+        const body = req.body;
+        const tag = new Tag(body);   
+        await tag.save();
+        res.send(tag);
+    }   catch (e) {
+        console.log('post /tag/create error. tag not saved. e: ', e);
+        res.status(200).send(error(e.message));
+    }   
+});
+
+//GET all tags
+app.get('/tag/all', async (req,res) => {
+    try{
+        const allTags = await Tag.find({});
+        res.send(allTags);
     } catch (e) {
         res.status(200).send(e.message);
     }    
