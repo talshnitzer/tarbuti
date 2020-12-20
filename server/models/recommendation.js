@@ -30,7 +30,19 @@ var RecommendationSchema = new mongoose.Schema({
         require: true,
         type: String
     },
-    tags: {
+    tags1: {
+        type: [String],
+        trim: true
+    },
+    tags2: {
+        type: [String],
+        trim: true
+    },
+    tags3: {
+        type: [String],
+        trim: true
+    },
+    tags4: {
         type: [String],
         trim: true
     },

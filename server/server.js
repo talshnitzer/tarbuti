@@ -26,6 +26,7 @@ app.post('/recommendation/create',async (req,res)=>{
         const body = req.body;
         const recommendation = new Recommendation(body);   
         await recommendation.save();
+        console.log('/recommendation/create req.body recommendation',req.body,recommendation);
         res.send(recommendation);
     }   catch (e) {
         console.log('post /recommendation/create error. recommendation not saved. e: ', e);
@@ -43,17 +44,20 @@ app.post('/recommendation/update/:id', async (req,res) => {
             'providerPhone',
             'providerEmail', 
             'description',
-            'tags',
+            'tags1',
+            'tags2',
+            'tags3',
+            'tags4',
             'eventDate',
             'servicePrice',
             'priceRemarks']); 
         let recommendation = await Recommendation.findByIdAndUpdate(id,body,{new: true});
-        console.log('***/recommendation/update/:id recommendation: ');
+        console.log('***/recommendation/update/:id recommendation: ', recommendation);
 
         if (!recommendation){
             throw new Error('1')
         }
-        res.send({recommendation});
+        res.send(recommendation);
 
     } catch(e) {
         console.log('***/recommendation/update/:id error e:', e);
