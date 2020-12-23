@@ -6,13 +6,11 @@ const UserSchema = new mongoose.Schema({//store the schema of the user. we can a
     firstName: {
         type: String,
         required: true,
-        unique: true,
         trim: true
     },
     lastName: {
         type: String,
         required: true,
-        unique: true,
         trim: true
     },
     userType: {
@@ -23,8 +21,8 @@ const UserSchema = new mongoose.Schema({//store the schema of the user. we can a
     },
     password: {
         type: String,
-        required: true,
-        trim: true
+        trim: true,
+        default: ""
     },
     tokens: [{
         access: { //define the type of the token
@@ -41,10 +39,21 @@ const UserSchema = new mongoose.Schema({//store the schema of the user. we can a
         trim: true,
         unique: true
     },
+    email: {
+        type: String,
+        trim: true,
+        unique: true
+    },
     community: {
         type: String,
         trim: true
+    },
+    status: {
+        type: String,
+        trim: true,
+        enum: ['approved','pending']
     }
+
 });
 
 //INSTANCE methods
@@ -68,7 +77,7 @@ UserSchema.methods.generateAuthToken = function () {
 UserSchema.statics.findByCredentials = function (userName, password) {
     var User = this;
 
-    return User.findOne({userName}).then((user) => {
+    return User.findOne({email: userName}).then((user) => {
         if(!user) {
             console.log('findByCredentials user not found 1');
             
@@ -108,7 +117,7 @@ UserSchema.pre(['save'], function (next) {
 
 UserSchema.post('save', function(error, doc, next) {
     if(error.name === 'MongoError' && error.code === 11000) 
-        next(new Error('This user phoneNum already exist'));
+        next(new Error('This user phoneNum or email already exist'));
     else next(error)
 })
 
@@ -134,7 +143,6 @@ UserSchema.statics.findByToken = function (token, userTypes)  {
     }); 
 
 };
-
 
 
 var User = mongoose.model('User', UserSchema);

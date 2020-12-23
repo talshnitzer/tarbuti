@@ -9,7 +9,7 @@ const { authenticate } = require('./middleware/authenticate');
 const {User} = require('./models/user');
 const {Tag} = require('./models/tag');
 const {Recommendation} = require('./models/recommendation')
-const {error} = require('./service')
+const {error, createValidationCode, sendEmail} = require('./service')
 
 const app = express();
 const corsOptions = {
@@ -19,6 +19,64 @@ const corsOptions = {
 const port = process.env.PORT ;
 app.use(cors(corsOptions));
 app.use(bodyParser.json()); //convert the request body from json to an object
+
+//SIGN-UP FLOW:
+//user post sign up request - server register the user doc as "pending"
+app.post('/user/create', async (req,res) => {
+    try {
+        const body = _.pick(req.body, ['email', 'firstName', 'lastName','phoneNum', 'community']);
+        let user = new User(body);
+        user.status = 'pending'
+        user.userType = 'user'
+        await user.save();
+        let userId = {}
+        userId = user._id
+        res.send({userId});
+    } catch (e) {
+        console.log('app.post(/user/create e', e); 
+        res.status(200).send(error(e.message));
+    }
+});
+
+//Admin post user approval, server generates password for the user 
+//and send it by email (sms in the future) - this validates the user email (or phone num in future)
+//user doc updates from "pending" to "approved"
+app.post('/user/approve/:id',authenticate(['admin']), async (req, res) => {
+    try {
+        const id = req.params.id
+        let user = await User.findByIdAndUpdate(id,{status: 'approved'},{new: true});
+        //await func to send email with code
+        const validationCode = createValidationCode()
+        user.password = validationCode
+        await user.save();
+        await sendEmail(user.email, validationCode, user.name);
+        res.send({status: 'OK', validationCode});
+    } catch (e) {
+        res.status(200).send({error: e.message})
+        console.log('e', e);
+    } 
+});
+
+//Login - after the user is approved  - login with email (phone num) and password
+//server validates the user credetials and status
+app.post('/user/login', async (req,res) => {
+    try {
+        const body = _.pick(req.body, ['email', 'password']);
+        const user = await User.findByCredentials(body.email, body.password);
+        console.log('/user/login user', user);
+        
+        const token = await user.generateAuthToken();
+        console.log('/user/login token', token);
+        
+        let userDetails = {_id: user._id, userType: user.userType, userName: user.userName}
+        res.header('x-auth',token).send({userDetails});
+    } catch (e) {
+        res.status(200).send(error(e));
+    }
+});
+
+
+
 
 //Create a recommendation
 app.post('/recommendation/create',async (req,res)=>{
