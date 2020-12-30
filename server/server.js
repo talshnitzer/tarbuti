@@ -44,11 +44,14 @@ app.post('/user/create', async (req,res) => {
 app.post('/user/approve/:id',authenticate(['admin']), async (req, res) => {
     try {
         const id = req.params.id
+        console.log('/user/approve/:id--- id', id);
         let user = await User.findByIdAndUpdate(id,{status: 'approved'},{new: true});
+        console.log('/user/approve/:id--- user', user);
         //await func to send email with code
         const validationCode = createValidationCode()
         user.password = validationCode
         await user.save();
+        console.log('/user/approve/:id--- user.email, user.name', user.email, user.name);
         await sendEmail(user.email, validationCode, user.name);
         res.send({status: 'OK', validationCode});
     } catch (e) {
@@ -75,14 +78,25 @@ app.post('/user/login', async (req,res) => {
     }
 });
 
+//GET all users
+app.get('/user/all', async (req,res) => {
+    try{
+        const allUsers = await User.find({},'firstName lastName email phoneNum community status').exec();
+        res.send(allUsers);
+    } catch (e) {
+        res.status(200).send(e.message);
+    }    
+});
 
 
+//--------------------------------------------------------------------------------------//
 
 //Create a recommendation
-app.post('/recommendation/create',async (req,res)=>{
+app.post('/recommendation/create',authenticate(['user','admin']),async (req,res)=>{
     try{
         const body = req.body;
-        const recommendation = new Recommendation(body);   
+        const recommendation = new Recommendation(body);
+        recommendation._creatorId = req.user._id   
         await recommendation.save();
         console.log('/recommendation/create req.body recommendation',req.body,recommendation);
         res.send(recommendation);
@@ -145,7 +159,11 @@ app.post('/recommendation/delete/:id' ,async (req, res) => {
 //GET all recommendations
 app.get('/recommendation/all', async (req,res) => {
     try{
-        const allRecommendations = await Recommendation.find({});
+        const allRecommendations = await Recommendation.find()
+            .populate({
+                path: '_creatorId',
+                select: 'firstName lastName community'
+            })
         res.send(allRecommendations);
     } catch (e) {
         res.status(200).send(e.message);

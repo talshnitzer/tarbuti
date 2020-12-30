@@ -2,8 +2,7 @@ const mongoose = require('mongoose');
 
 var RecommendationSchema = new mongoose.Schema({
     _creatorId: {
-        type: String,
-        require: true
+        type:  mongoose.Schema.Types.ObjectId, ref: 'User' 
     },
     serviceName: {
         type: String,

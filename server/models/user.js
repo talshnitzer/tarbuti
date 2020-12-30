@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const UserSchema = new mongoose.Schema({//store the schema of the user. we can add method to 'schema' but not to 'model'
+    _id: mongoose.Schema.Types.ObjectId,
     firstName: {
         type: String,
         required: true,
