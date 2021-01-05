@@ -28,7 +28,7 @@ const  sendEmail = async (email, validationCode, userName ) => {
       html: 
       `שלום ${userName} <br><br> תודה על הצטרפותך לאפליקציית תרבותי.<br><br>`+
       `הססמא שלך היא<b>${validationCode}</b><br><br>`  +
-      `אנא הכנס אותה בשדה ״סיסמא״ במסך ההתחברות<br><br>` +
+      `נא להכניס אותה בשדה ״סיסמא״ במסך ההתחברות<br><br>` +
       `תודה<br><br>תרבותי - משגב`
   };
 

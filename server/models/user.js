@@ -37,8 +37,7 @@ const UserSchema = new mongoose.Schema({//store the schema of the user. we can a
     }],
     phoneNum: {
         type: String,
-        trim: true,
-        unique: true
+        trim: true
     },
     email: {
         type: String,
