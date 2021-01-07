@@ -17,7 +17,7 @@ const transporter = nodemailer.createTransport({
   });
 
 
-
+// R.R: the html here is almost too long. if it would have been a bit bigger I would say for sure to take it out to an html template file. your call in this case... 
 const  sendEmail = async (email, validationCode, userName ) => {
   try{
     let mailOptions = {
@@ -33,12 +33,14 @@ const  sendEmail = async (email, validationCode, userName ) => {
   };
 
   await transporter.sendMail(mailOptions);
-  } catch (e) {
+  } catch (e) { // R.R: why do you need the catch if you just throw the error?
     throw new Error(e.message);
   }
     
 }
 
+// R.R: this is a bit old fanation in my opinion. when you throw the error '1' it's not informative to who ever is looking at the code. 
+// and you don't have any reall functinally here so I don't really understant the point of this function
 //standart error output function
 const error = (err) => {
     let errmsg = {}
