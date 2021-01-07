@@ -56,6 +56,8 @@ const UserSchema = new mongoose.Schema({//store the schema of the user. we can a
 
 });
 
+//R.R having the methods here make thos file too long 
+
 //INSTANCE methods
 
 //generate token in each login access
