@@ -116,8 +116,10 @@ UserSchema.pre(['save'], function (next) {
 
 
 UserSchema.post('save', function(error, doc, next) {
-    if(error.name === 'MongoError' && error.code === 11000) 
-        next(new Error('This user phoneNum or email already exist'));
+    if(error.name === 'MongoError' && error.code === 11000) {
+        console.log('UserSchema.posts save--- error', error);
+        next(new Error('This user email already exist'));
+    }
     else next(error)
 })
 
