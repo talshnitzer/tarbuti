@@ -11,6 +11,7 @@ const { User } = require("./models/user");
 const { Tag } = require("./models/tag");
 const { Recommendation } = require("./models/recommendation");
 const { error, createValidationCode, sendEmail } = require("./service");
+var path = require('path');
 
 const app = express();
 const corsOptions = {
@@ -20,6 +21,8 @@ const corsOptions = {
 const port = process.env.PORT;
 app.use(cors(corsOptions));
 app.use(bodyParser.json()); //convert the request body from json to an object
+app.use(express.static(path.join(__dirname, '..','build')))
+
 
 //SIGN-UP FLOW:
 //user post sign up request - server register the user doc as "pending"
@@ -301,6 +304,10 @@ app.get("/tag/all", async (req, res) => {
   } catch (e) {
     res.status(200).send(e.message);
   }
+});
+
+app.use('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
 });
 
 app.listen(port, () => {
