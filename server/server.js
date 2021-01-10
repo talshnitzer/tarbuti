@@ -1,3 +1,4 @@
+//code review branch
 require("./config/config.js");
 
 const { mongoose } = require("./db/mongoose");
@@ -24,6 +25,8 @@ app.use(bodyParser.json()); //convert the request body from json to an object
 app.use(express.static(path.join(__dirname, '..','build')))
 
 
+//R.R: you should split this file into smaller files, you even have already comments for the relevant sections like: login, recomendation, tag
+
 //SIGN-UP FLOW:
 //user post sign up request - server register the user doc as "pending"
 app.post("/user/create", async (req, res) => {
@@ -44,7 +47,7 @@ app.post("/user/create", async (req, res) => {
     res.send({ userId });
   } catch (e) {
     console.log("app.post(/user/create e", e);
-    res.status(200).send(error(e.message));
+    res.status(200).send(error(e.message)); // here and along thid file. don't return 200 if it's an error. return the relevant REST error code 
   }
 });
 
@@ -201,14 +204,14 @@ app.post(
         _creatorId: req.user._id,
       });
       if (!recommendation) {
-        throw new Error("1");
+        throw new Error("1"); // R.R: related to throwing an error 1 which is not meaningful here and I don't what to search you code to see what 1 is. 
       }
 
       await recommendation.remove();
       console.log("***/recommendation/delete/:id removed");
 
       let ok = "ok";
-      res.send({ ok });
+      res.send({ ok }); // R.R: why? why not just res.send({ "ok" }); ? 
     } catch (e) {
       res.status(200).send(error(e.message));
     }

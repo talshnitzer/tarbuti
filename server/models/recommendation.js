@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+//R.R: what's the tag1, tag2, tag3, tag4? don't seem optimal...
+
 var RecommendationSchema = new mongoose.Schema({
     _creatorId: {
         type:  mongoose.Schema.Types.ObjectId, ref: 'User' 

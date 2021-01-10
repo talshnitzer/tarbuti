@@ -8,10 +8,10 @@ const authenticate = (userTypes) => {
         const token = req.header('x-auth');
         console.log('authenticate token', token);
         
-        User.findByToken(token, userTypes).then((user) => {
+        User.findByToken(token, userTypes).then((user) => { //R.R why are you not using async await and you are using Promises?  
             if (!user){
                 console.log('authenticate - user not found');
-                return Promise.reject('5');  
+                return Promise.reject('5');  //R.R: same comments here. don't reject with '5'
             }
             if (user.blocked) {
                 console.log('authenticate - user blocked');
@@ -24,7 +24,7 @@ const authenticate = (userTypes) => {
         }).catch((e) => {
             console.log('authenticate catch e', e);
             
-            res.status(200).send(error(e));
+            res.status(200).send(error(e)); //R.R: same comments here. don't return 200 with an error
         });
     };
 }
