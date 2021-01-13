@@ -44,7 +44,7 @@ app.post("/user/create", async (req, res) => {
     res.send({ userId });
   } catch (e) {
     console.log("app.post(/user/create e", e);
-    res.status(200).send(error(e.message));
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -73,7 +73,7 @@ app.post("/user/approve/:id", authenticate(["admin"]), async (req, res) => {
     await sendEmail(user.email, validationCode, user.firstName);
     res.send({ status: "OK", validationCode });
   } catch (e) {
-    res.status(200).send({ error: e.message });
+    res.status(400).send(error(e.message));
     console.log("e", e);
   }
 });
@@ -96,7 +96,7 @@ app.post("/user/login", async (req, res) => {
     };
     res.header("x-auth", token).send({ userDetails });
   } catch (e) {
-    res.status(200).send(error(e));
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -109,7 +109,7 @@ app.get("/user/all", authenticate(["admin"]), async (req, res) => {
     ).exec();
     res.send(allUsers);
   } catch (e) {
-    res.status(200).send(e.message);
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -140,7 +140,7 @@ app.post(
         "post /recommendation/create error. recommendation not saved. e: ",
         e
       );
-      res.status(200).send(error(e.message));
+      res.status(400).send(error(e.message));
     }
   }
 );
@@ -184,7 +184,7 @@ app.post(
       res.send(recommendation);
     } catch (e) {
       console.log("***/recommendation/update/:id error e:", e);
-      res.status(200).send(error(e.message));
+      res.status(400).send(error(e.message));
     }
   }
 );
@@ -210,7 +210,7 @@ app.post(
       let ok = "ok";
       res.send({ ok });
     } catch (e) {
-      res.status(200).send(error(e.message));
+      res.status(400).send(error(e.message));
     }
   }
 );
@@ -224,7 +224,7 @@ app.get("/recommendation/all", async (req, res) => {
     });
     res.send(allRecommendations);
   } catch (e) {
-    res.status(200).send(e.message);
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -241,7 +241,7 @@ app.get(
       });
       res.send(recommendation);
     } catch (e) {
-      res.status(200).send(e.message);
+      res.status(400).send(error(e.message));
     }
   }
 );
@@ -255,7 +255,7 @@ app.post("/tag/create", authenticate(["admin"]), async (req, res) => {
     res.send(tag);
   } catch (e) {
     console.log("post /tag/create error. tag not saved. e: ", e);
-    res.status(200).send(error(e.message));
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -273,7 +273,7 @@ app.post("/tag/update/:id", authenticate(["admin"]), async (req, res) => {
     res.send({ tag });
   } catch (e) {
     console.log("***/tag/update/:id error e:", e);
-    res.status(200).send(error(e.message));
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -292,7 +292,7 @@ app.post("/tag/delete/:id", authenticate(["admin"]), async (req, res) => {
     let ok = "ok";
     res.send({ ok });
   } catch (e) {
-    res.status(200).send(error(e.message));
+    res.status(400).send(error(e.message));
   }
 });
 
@@ -302,7 +302,7 @@ app.get("/tag/all", async (req, res) => {
     const allTags = await Tag.find({});
     res.send(allTags);
   } catch (e) {
-    res.status(200).send(e.message);
+    res.status(400).send(error(e.message));
   }
 });
 
