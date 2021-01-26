@@ -24,7 +24,7 @@ const authenticate = (userTypes) => {
         }).catch((e) => {
             console.log('authenticate catch e', e);
             
-            res.status(200).send(error(e));
+            res.status(400).send(error(e));
         });
     };
 }

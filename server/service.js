@@ -31,7 +31,7 @@ const sendEmail = async (email, validationCode, userName) => {
         `תודה<br><br>תרבותי - משגב`,
     };
     await transporter.sendMail(mailOptions);
-  } catch (e) {
+  } catch (e) {  //catch here to deliver user friendly error message
     throw new Error(e.message);
   }
 };
@@ -41,7 +41,7 @@ const error = (err) => {
   let errmsg = {};
   switch (err) {
     case "1":
-      errmsg = { error: "document not found" };
+      errmsg = { error: "user not found" };
       break;
     case "2":
       errmsg = { error: "password not correct" };

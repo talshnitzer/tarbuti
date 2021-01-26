@@ -16,9 +16,9 @@ const UserSchema = new mongoose.Schema({//store the schema of the user. we can a
     },
     userType: {
         type: String,
-        required: true,
         trim: true,
-        enum: ['user','admin']
+        enum: ['user','admin'],
+        default: 'user'
     },
     password: {
         type: String,
@@ -90,7 +90,7 @@ UserSchema.statics.findByCredentials = function (userName, password) {
                 if (res) {
                     resolve(user);
                 } else {
-                    console.log('findByCredentials user auth not passed');
+                    console.log('findByCredentials user auth not passed password, user.password',password, user.password );
                     
                     reject('2');
                 }
@@ -136,7 +136,7 @@ UserSchema.statics.findByToken = function (token, userTypes)  {
         
         return Promise.reject('4');     
     }
-
+    console.log('UserSchema.statics.findByToken decoded._id', decoded._id);
     return User.findOne({
         '_id': decoded._id,
         'userType': {$in: userTypes},

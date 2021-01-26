@@ -11,18 +11,17 @@ const { User } = require("./models/user");
 const { Tag } = require("./models/tag");
 const { Recommendation } = require("./models/recommendation");
 const { error, createValidationCode, sendEmail } = require("./service");
-var path = require('path');
+var path = require("path");
 
 const app = express();
 const corsOptions = {
   origin: "*",
   exposedHeaders: ["Content-Range", "x-auth", "Content-Type"],
 };
-const port = process.env.PORT;
+
 app.use(cors(corsOptions));
 app.use(bodyParser.json()); //convert the request body from json to an object
-app.use(express.static(path.join(__dirname, '..','build')))
-
+app.use(express.static(path.join(__dirname, "..", "build")));
 
 //SIGN-UP FLOW:
 //user post sign up request - server register the user doc as "pending"
@@ -36,8 +35,9 @@ app.post("/user/create", async (req, res) => {
       "community",
     ]);
     let user = new User(body);
-    (user._id = new mongoose.Types.ObjectId()), (user.status = "pending");
-    user.userType = "user";
+    user._id = new mongoose.Types.ObjectId(),
+    user.status = "pending";
+    //user.userType = "user";
     await user.save();
     let userId = {};
     userId = user._id;
@@ -96,7 +96,8 @@ app.post("/user/login", async (req, res) => {
     };
     res.header("x-auth", token).send({ userDetails });
   } catch (e) {
-    res.status(400).send(error(e.message));
+    console.log("/user/login error e:", e);
+    res.status(400).send(error(e));
   }
 });
 
@@ -125,10 +126,12 @@ app.post(
       const recommendation = new Recommendation(body);
       recommendation._creatorId = req.user._id;
       await recommendation.save();
-      const recommendationPop = await recommendation.populate({
-        path: "_creatorId",
-        select: "firstName lastName community",
-      }).execPopulate();
+      const recommendationPop = await recommendation
+        .populate({
+          path: "_creatorId",
+          select: "firstName lastName community",
+        })
+        .execPopulate();
       console.log(
         "/recommendation/create recommendation recommendationPop",
         recommendation,
@@ -173,6 +176,14 @@ app.post(
           new: true,
         }
       );
+
+      await recommendation
+        .populate({
+          path: "_creatorId",
+          select: "firstName lastName community",
+        })
+        .execPopulate();
+
       console.log(
         "***/recommendation/update/:id recommendation: ",
         recommendation
@@ -306,12 +317,8 @@ app.get("/tag/all", async (req, res) => {
   }
 });
 
-app.use('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'build', 'index.html'));
-});
-
-app.listen(port, () => {
-  console.log(`Started up at port ${port}`);
+app.use("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "..", "build", "index.html"));
 });
 
 module.exports = { app };
