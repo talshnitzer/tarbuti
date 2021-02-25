@@ -34,10 +34,9 @@ app.post("/user/create", async (req, res) => {
       "phoneNum",
       "community",
     ]);
+    body.email = body.email.toLowerCase();
     let user = new User(body);
-    user._id = new mongoose.Types.ObjectId(),
-    user.status = "pending";
-    //user.userType = "user";
+    (user._id = new mongoose.Types.ObjectId()), (user.status = "pending");
     await user.save();
     let userId = {};
     userId = user._id;
@@ -54,22 +53,15 @@ app.post("/user/create", async (req, res) => {
 app.post("/user/approve/:id", authenticate(["admin"]), async (req, res) => {
   try {
     const id = req.params.id;
-    console.log("/user/approve/:id--- id", id);
     let user = await User.findByIdAndUpdate(
       id,
       { status: "approved" },
       { new: true }
     );
-    console.log("/user/approve/:id--- user", user);
     //await func to send email with code
     const validationCode = createValidationCode();
     user.password = validationCode;
     await user.save();
-    console.log(
-      "/user/approve/:id--- user.email, user.name",
-      user.email,
-      user.name
-    );
     await sendEmail(user.email, validationCode, user.firstName);
     res.send({ status: "OK", validationCode });
   } catch (e) {
@@ -83,11 +75,12 @@ app.post("/user/approve/:id", authenticate(["admin"]), async (req, res) => {
 app.post("/user/login", async (req, res) => {
   try {
     const body = _.pick(req.body, ["email", "password"]);
-    const user = await User.findByCredentials(body.email, body.password);
-    console.log("/user/login user", user);
+    const user = await User.findByCredentials(
+      body.email.toLowerCase(),
+      body.password
+    );
 
     const token = await user.generateAuthToken();
-    console.log("/user/login token", token);
 
     let userDetails = {
       _id: user._id,
@@ -96,7 +89,6 @@ app.post("/user/login", async (req, res) => {
     };
     res.header("x-auth", token).send({ userDetails });
   } catch (e) {
-    console.log("/user/login error e:", e);
     res.status(400).send(error(e));
   }
 });
@@ -132,11 +124,7 @@ app.post(
           select: "firstName lastName community",
         })
         .execPopulate();
-      console.log(
-        "/recommendation/create recommendation recommendationPop",
-        recommendation,
-        recommendationPop
-      );
+
       res.send(recommendationPop);
     } catch (e) {
       console.log(
